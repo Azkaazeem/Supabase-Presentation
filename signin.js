@@ -9,37 +9,48 @@ let lBtn = document.querySelector("#login-btn input");
  async function login(e){
     e.preventDefault();
 
+     
+
+
+
     if (lEmail.value === "admin@gmail.com" && lPass.value === "admin12345") {
       location.href = "dashboard.html";
       return;
     }
-
+  
    try {
     const { data, error } = await supaBase.auth.signInWithPassword({
      email: lEmail.value,
      password: lPass.value,
   })
 
-    if (error){
-      console.log (error);
-       Swal.fire({
-  title: "login Failed!" ,
-  text: error.message,
-  icon: "error",
-  draggable: true
-})
-return;
-    }else {
-       Swal.fire({
-  title: "successfully login to your account!" ,
-  icon: "success",
-  draggable: true
+           if (error) {
+            if (error.message.includes("Invalid login credentials")) {
+                Swal.fire({
+                    title: "Invalid Email or Password!",
+                    text: "Please check your email and password.",
+                    icon: "error"
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: "Login Failed!",
+                text: error.message,
+                icon: "error"
+            });
+            return;
+        }
+
+Swal.fire({
+  title: "Successfully logged in!",
+  icon: "success"
 }).then ( ()=> {
    location.href = "home.html"
 })
 
     }
-   } catch (err) {
+   catch (err) {
     console.log(err)
    }
  }
